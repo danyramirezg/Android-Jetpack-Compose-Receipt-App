@@ -20,8 +20,11 @@ class RecipeViewModel @Inject constructor(
     private val token: String
 ) : ViewModel() {
 
-    private val _recipeList =  MutableStateFlow<List<Recipe>>(emptyList())
+    private val _recipeList = MutableStateFlow<List<Recipe>>(emptyList())
     var recipeList: StateFlow<List<Recipe>> = _recipeList.asStateFlow()
+
+    private val _recipe = MutableStateFlow<Recipe?>(null)
+    var recipe: StateFlow<Recipe?> = _recipe.asStateFlow()
 
 
     fun searchRecipe() {
@@ -32,6 +35,12 @@ class RecipeViewModel @Inject constructor(
                 query = "pasta"
             )
             _recipeList.update { result }
+        }
+    }
+
+    fun getRecipeById(recipeId: String) {
+        viewModelScope.launch {
+            _recipe.value = repository.getRecipe(token, recipeId.toInt())
         }
     }
 }
